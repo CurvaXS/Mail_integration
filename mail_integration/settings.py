@@ -36,9 +36,13 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles',
 
+    'daphne',
+
+    'django.contrib.staticfiles',
+    
     'channels',
+
     'mail_app',
 ]
 

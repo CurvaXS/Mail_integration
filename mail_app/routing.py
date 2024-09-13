@@ -2,5 +2,5 @@ from django.urls import path
 from . import consumers
 
 websocket_urlpatterns = [
-    path('ws/mail/', consumers.MailConsumer.as_asgi()),
+    path('ws/as_mail/', consumers.AsyncMailConsumer.as_asgi()),
 ]

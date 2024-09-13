@@ -1,18 +1,24 @@
 import json
-from channels.generic.websocket import AsyncWebsocketConsumer
+from channels.generic.websocket import AsyncWebsocketConsumer, WebsocketConsumer
 
 
-class MailConsumer(AsyncWebsocketConsumer):
+class AsyncMailConsumer(AsyncWebsocketConsumer):
     async def connect(self):
+        await self.channel_layer.group_add("email_notifications", self.channel_name)
         await self.accept()
 
+        # await self.send(json.dumps({
+        #     'message': 'connected'
+        # }))
+
+
     async def disconnect(self, close_code):
-        pass
+        await self.channel_layer.group_discard("email_notifications", self.channel_name)
 
-    async def receive(self, text_data):
-        text_data_json = json.loads(text_data)
-        message = text_data_json['message']
 
+    async def new_email(self, event):
+        message = event['message']
         await self.send(text_data=json.dumps({
             'message': message
         }))
+

@@ -33,7 +33,7 @@
         <div id="progress-text">Reading messages...</div>
     </div>
     <script>
-        const ws = new WebSocket('ws://' + window.location.host + '/ws/mail/');
+        const ws = new WebSocket('ws://' + window.location.host + '/ws/as_mail/');
 
         ws.onmessage = function (event) {
             const data = JSON.parse(event.data);
