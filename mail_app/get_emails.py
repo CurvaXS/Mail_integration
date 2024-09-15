@@ -1,3 +1,4 @@
+import datetime
 import time
 import json
 import threading
@@ -14,17 +15,25 @@ MAIL_USER = "mm.pyshkin@yandex.ru"
 def create_db_object(mail_user, m_subject, m_date, m_html, m_attachments):
     try:
         mail_account = MailAccount.objects.get(email=mail_user)
+
+        # m_date_str = m_date.isoformat() if isinstance(m_date, datetime) else m_date
+
         MailMessage.objects.create(
             mail_account=mail_account,
             subject=m_subject,
             sent_date=m_date,
-            received_date=m_date,
+            # received_date=m_date_str,
             body=m_html,
             attachments=m_attachments,
         )
         print("Сообщение добавлено в базу данных")
-    except:
+    except MailAccount.DoesNotExist:
+        # Обрабатываем конкретное исключение, если пользователь не найден
         print(f"Пользователь с email {mail_user} не найден в базе данных")
+        return
+    except Exception as e:
+        # Обрабатываем другие исключения и выводим их
+        print(f"Произошла ошибка: {str(e)}")
         return
 
 
@@ -37,7 +46,7 @@ def idle_fetch_emails(mail_user, mail_pass):
             print("Ждем новое сообщение...")
             mb.idle.wait(timeout=10)
 
-            messages = mb.fetch(reverse=True, mark_seen=False)
+            messages = mb.fetch(limit=100, reverse=True, mark_seen=False)
 
             for msg in messages:
 

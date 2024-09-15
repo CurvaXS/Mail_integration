@@ -1,17 +1,30 @@
 {% extends 'mail_app/base.html' %}
 
 {% block content %}
-<h1>Mail List</h1>
-<table>
+
+<div id="progress-bar"></div>
+    <div id="progress-text">Reading messages...</div>
+</div>
+<table class="table table-hover table-primary text-center">
     <thead>
         <tr>
+            <th>#</th>
             <th>Subject</th>
             <th>Sent Date</th>
             <th>Received Date</th>
             <th>Body</th>
         </tr>
     </thead>
-    <tbody>
+    <tbody class="table-group-divider">
+        <tr>
+            <td>1</td>
+            <td>2</td>
+            <td>3</td>
+            <td>4</td>
+            <td>5</td>
+        </tr>
+    </tbody>
+    <!-- <tbody>
         {% for message in messages %}
         <tr>
             <td>{{ message.subject }}</td>
@@ -20,17 +33,15 @@
             <td>{{ message.body|truncatechars:50 }}</td>
         </tr>
         {% endfor %}
-    </tbody>
+    </tbody> -->
 </table>
-<div id="progress-bar">
-    <div id="progress-text">Reading messages...</div>
-</div>
+
 <script>
     const ws = new WebSocket('ws://' + window.location.host + '/ws/as_mail/');
 
     ws.onmessage = function (event) {
         const data = JSON.parse(event.data);
-        document.getElementById('progress-text').innerText = data.message;
+        console.log('Новое сообщение:', data.message);
     };
 </script>
 {% endblock %}

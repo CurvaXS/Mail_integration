@@ -2,7 +2,7 @@ import threading
 
 from django.shortcuts import render, redirect
 
-from .models import MailMessage
+from .models import MailMessage, MailAccount
 from .forms import MailAccountForm
 from . import get_emails
 
@@ -19,15 +19,11 @@ def index(request):
         if form.is_valid() and not imap_idle_running:
             # Если форма валидна и IMAP IDLE не запущен
             imap_idle_running = True  # Помечаем, что IMAP IDLE запущен
-
             # Получаем значения почты (можно добавить поля в форму для ввода этих данных)
             mail_user = form.cleaned_data.get("email")
             mail_pass = form.cleaned_data.get("password")
             form.save()
-
-            # Запускаем IMAP IDLE в отдельном потоке и передаем почту
             get_emails.start_idle_listener(mail_user, mail_pass)
-
             return redirect('mail_list')
     else:
         form = MailAccountForm()
