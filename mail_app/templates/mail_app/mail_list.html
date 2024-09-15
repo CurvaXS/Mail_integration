@@ -1,45 +1,36 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'mail_app/base.html' %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mail List</title>
-</head>
+{% block content %}
+<h1>Mail List</h1>
+<table>
+    <thead>
+        <tr>
+            <th>Subject</th>
+            <th>Sent Date</th>
+            <th>Received Date</th>
+            <th>Body</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for message in messages %}
+        <tr>
+            <td>{{ message.subject }}</td>
+            <td>{{ message.sent_date }}</td>
+            <td>{{ message.received_date }}</td>
+            <td>{{ message.body|truncatechars:50 }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<div id="progress-bar">
+    <div id="progress-text">Reading messages...</div>
+</div>
+<script>
+    const ws = new WebSocket('ws://' + window.location.host + '/ws/as_mail/');
 
-<body>
-    <h1>Mail List</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>Subject</th>
-                <th>Sent Date</th>
-                <th>Received Date</th>
-                <th>Body</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for message in messages %}
-            <tr>
-                <td>{{ message.subject }}</td>
-                <td>{{ message.sent_date }}</td>
-                <td>{{ message.received_date }}</td>
-                <td>{{ message.body|truncatechars:50 }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <div id="progress-bar">
-        <div id="progress-text">Reading messages...</div>
-    </div>
-    <script>
-        const ws = new WebSocket('ws://' + window.location.host + '/ws/as_mail/');
-
-        ws.onmessage = function (event) {
-            const data = JSON.parse(event.data);
-            document.getElementById('progress-text').innerText = data.message;
-        };
-    </script>
-</body>
-
-</html>
+    ws.onmessage = function (event) {
+        const data = JSON.parse(event.data);
+        document.getElementById('progress-text').innerText = data.message;
+    };
+</script>
+{% endblock %}
