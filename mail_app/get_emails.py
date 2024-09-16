@@ -8,9 +8,12 @@ from imap_tools import MailBox, AND
 # from .models import *
 from .models import MailAccount, MailMessage
 
-MAIL_PASS = "pprxyurridjfvoiv"
-MAIL_USER = "mm.pyshkin@yandex.ru"
 
+def extract_domain(email):
+    # Разделяем строку по символу '@'
+    parts = email.split('@')
+    # Возвращаем вторую часть (домен)
+    return parts[1]
 
 def create_db_object(mail_user, m_subject, m_date, m_html, m_attachments):
     try:
@@ -40,7 +43,8 @@ def create_db_object(mail_user, m_subject, m_date, m_html, m_attachments):
 
 
 def idle_fetch_emails(mail_user, mail_pass):
-    with MailBox("imap.yandex.ru").login(mail_user, mail_pass, "Inbox") as mb:
+    domain = extract_domain(mail_user)
+    with MailBox(f"imap.{domain}").login(mail_user, mail_pass, "Inbox") as mb:
         # print(mb.folder.list())
 
         # Входим в режим ожидания (IDLE)
