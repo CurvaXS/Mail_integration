@@ -1,0 +1,17 @@
+{% extends 'mail_app/base.html' %}
+
+{% block content %}
+
+<h1 class="pb-5">Письмо</h1>
+<div class="w-100 mx-5 p-5">
+    <h1 class="pb-3">{{ mess.subject }}</h1>
+    <p class="pt-3">Отправлено: {{ mess.sent_date }}</p>
+    <p class="pb-3">Доставлено: {{ mess.received_date }}</p>
+    <iframe src="" frameborder="0">
+        {{ mess.body }}
+    </iframe>
+    <p>{{ mess.attachments }}</p>
+</div>
+
+
+{% endblock %}

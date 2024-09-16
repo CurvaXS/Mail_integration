@@ -18,15 +18,17 @@ def create_db_object(mail_user, m_subject, m_date, m_html, m_attachments):
 
         # m_date_str = m_date.isoformat() if isinstance(m_date, datetime) else m_date
 
-        MailMessage.objects.create(
-            mail_account=mail_account,
-            subject=m_subject,
-            sent_date=m_date,
-            # received_date=m_date_str,
-            body=m_html,
-            attachments=m_attachments,
-        )
-        print("Сообщение добавлено в базу данных")
+        if not MailMessage.objects.filter(mail_account=mail_account, subject=m_subject, sent_date=m_date, body=m_html).exists():
+            MailMessage.objects.create(
+                mail_account=mail_account,
+                subject=m_subject,
+                sent_date=m_date,
+                body=m_html,
+                attachments=m_attachments,
+            )
+            print("Сообщение добавлено в базу данных")
+        else:
+            print("Дублирующее сообщение, не добавлено в базу данных")
     except MailAccount.DoesNotExist:
         # Обрабатываем конкретное исключение, если пользователь не найден
         print(f"Пользователь с email {mail_user} не найден в базе данных")
@@ -44,9 +46,9 @@ def idle_fetch_emails(mail_user, mail_pass):
         # Входим в режим ожидания (IDLE)
         while True:
             print("Ждем новое сообщение...")
-            mb.idle.wait(timeout=10)
+            mb.idle.wait(timeout=0.05)
 
-            messages = mb.fetch(limit=100, reverse=True, mark_seen=False)
+            messages = mb.fetch(reverse=True, mark_seen=False)
 
             for msg in messages:
 
@@ -75,6 +77,9 @@ def start_idle_listener(m_user, m_pass):
     thread.daemon = True
     thread.start()
 
-
+def stop_idle_listener(thread):
+    global stop_event
+    stop_event.set()  # Установить флаг остановки
+    thread.join()  # Дождаться завершения потока
 # if __name__ == "__main__":
 #     start_idle_listener("mm.pyshkin@yandex.ru", "pprxyurridjfvoiv")

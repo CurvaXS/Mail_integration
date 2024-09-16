@@ -12,10 +12,12 @@ class MailAccountForm(forms.ModelForm):
         widgets = {
             'email': forms.EmailInput(attrs={
                 'class': 'form-control',
+                'id': 'floatingInput',
                 'placeholder': 'Введите почту'
             }),
             'password': forms.PasswordInput(attrs={
                 'class': 'form-control',
+                'id': 'floatingPassword',
                 'placeholder': 'Введите пароль'
             })
         }
